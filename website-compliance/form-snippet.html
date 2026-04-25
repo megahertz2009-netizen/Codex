@@ -1,0 +1,75 @@
+<!--
+  Корректный блок согласий для форм записи на приём, обратного звонка
+  и заявок на сайте другаяклиника.рф.
+
+  Правила:
+   - Чекбоксы по умолчанию ПУСТЫЕ (нет атрибута "checked").
+   - Кнопка отправки заблокирована, пока не отмечено обязательное согласие
+     на ПДн (для медформ — ещё и согласие на спец.категории).
+   - Ссылки идут на ОТДЕЛЬНЫЕ документы: политика, согласие, согласие
+     на здоровье, согласие на рассылку.
+   - Для маркетинговой рассылки — отдельный чекбокс, отдельный документ.
+-->
+
+<form id="appointment-form" action="/api/lead" method="post" novalidate>
+  <label>Имя*<br>
+    <input type="text" name="name" required>
+  </label>
+
+  <label>Телефон*<br>
+    <input type="tel" name="phone" required pattern="[0-9+\-\s\(\)]{10,}">
+  </label>
+
+  <label>Email (по желанию)<br>
+    <input type="email" name="email">
+  </label>
+
+  <label>Сообщение<br>
+    <textarea name="message" rows="3"></textarea>
+  </label>
+
+  <!-- Согласие на обработку обычных ПДн — обязательное -->
+  <label>
+    <input type="checkbox" name="consent_pd" id="consent_pd" required>
+    Я даю
+    <a href="/consent-pd/" target="_blank" rel="noopener">согласие на обработку
+    моих персональных данных</a>
+    и ознакомлен(а) с
+    <a href="/privacy-policy/" target="_blank" rel="noopener">Политикой
+    обработки персональных данных</a>.
+  </label>
+
+  <!-- Только для форм записи на приём / медицинских услуг — обязательное -->
+  <label>
+    <input type="checkbox" name="consent_health" id="consent_health" required>
+    Я даю
+    <a href="/consent-health/" target="_blank" rel="noopener">согласие на
+    обработку специальных категорий персональных данных (сведений о состоянии
+    здоровья)</a>.
+  </label>
+
+  <!-- Маркетинговое — НЕ обязательное, отдельный документ -->
+  <label>
+    <input type="checkbox" name="consent_marketing" id="consent_marketing">
+    Я согласен(на) на получение информационных и рекламных сообщений
+    об услугах и акциях клиники.
+  </label>
+
+  <button type="submit" id="submit-btn" disabled>Записаться</button>
+</form>
+
+<script>
+(function(){
+  var f = document.getElementById('appointment-form');
+  if (!f) return;
+  var btn = document.getElementById('submit-btn');
+  var required = ['consent_pd','consent_health']
+    .map(function(id){ return document.getElementById(id); })
+    .filter(Boolean);
+  function refresh(){
+    btn.disabled = !required.every(function(c){ return c.checked; });
+  }
+  required.forEach(function(c){ c.addEventListener('change', refresh); });
+  refresh();
+})();
+</script>

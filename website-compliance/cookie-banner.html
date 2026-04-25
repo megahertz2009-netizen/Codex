@@ -1,0 +1,116 @@
+<!--
+  Cookie-баннер для другаяклиника.рф.
+
+  Что делает:
+   - При первом заходе показывает баннер с двумя РАВНОПРАВНЫМИ кнопками:
+     "Принять" и "Отклонить".
+   - До нажатия "Принять" аналитические и маркетинговые скрипты НЕ грузятся
+     (Метрика стоит в отложенной загрузке).
+   - При "Принять" пишется cookie consent=granted на 180 дней и грузится Метрика.
+   - При "Отклонить" пишется cookie consent=denied на 180 дней; трекеры не грузятся.
+   - Пользователь может изменить решение, кликнув "Настройки cookie" в футере.
+
+  Куда вставить:
+   - Этот блок размещается перед закрывающим </body> на КАЖДОЙ странице сайта.
+   - Никаких других <script src="https://mc.yandex.ru/..."> на сайте быть НЕ ДОЛЖНО.
+     Метрика подключается только функцией loadYandexMetrika ниже.
+
+  Замените:
+   - YANDEX_METRIKA_ID — ваш номер счётчика.
+-->
+
+<style>
+  .cc-banner{position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;
+    background:#fff;color:#1a1a1a;border-radius:14px;
+    box-shadow:0 12px 32px rgba(0,0,0,.18);
+    padding:18px 20px;max-width:720px;margin:0 auto;font:14px/1.45 system-ui,sans-serif}
+  .cc-banner__title{font-weight:600;margin:0 0 6px;font-size:15px}
+  .cc-banner__text{margin:0 0 12px}
+  .cc-banner__text a{color:#1f6feb;text-decoration:underline}
+  .cc-banner__buttons{display:flex;gap:10px;flex-wrap:wrap}
+  .cc-btn{flex:1 1 140px;min-height:42px;border:0;border-radius:10px;
+    font:600 14px/1 system-ui,sans-serif;cursor:pointer;padding:0 16px}
+  .cc-btn--accept{background:#1f6feb;color:#fff}
+  .cc-btn--reject{background:#eef0f3;color:#1a1a1a}
+  .cc-btn:focus-visible{outline:2px solid #1f6feb;outline-offset:2px}
+  @media (max-width:480px){.cc-banner{left:8px;right:8px;bottom:8px;padding:14px}}
+</style>
+
+<div id="cc-banner" class="cc-banner" role="dialog" aria-live="polite"
+     aria-label="Уведомление об использовании cookie" hidden>
+  <p class="cc-banner__title">Файлы cookie</p>
+  <p class="cc-banner__text">
+    Мы используем строго необходимые cookie для работы сайта и, с вашего
+    согласия, аналитические cookie (Яндекс Метрика) для улучшения сайта.
+    Подробности — в <a href="/cookie-policy/">Политике cookie</a> и
+    <a href="/privacy-policy/">Политике обработки персональных данных</a>.
+  </p>
+  <div class="cc-banner__buttons">
+    <button type="button" class="cc-btn cc-btn--reject" id="cc-reject">Отклонить</button>
+    <button type="button" class="cc-btn cc-btn--accept" id="cc-accept">Принять</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY = 'cc_consent_v1';
+  var DAYS = 180;
+
+  function setCookie(name, val, days){
+    var d = new Date(); d.setTime(d.getTime() + days*86400000);
+    document.cookie = name+'='+val+'; expires='+d.toUTCString()+'; path=/; SameSite=Lax; Secure';
+  }
+  function getCookie(name){
+    var m = document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function loadYandexMetrika(){
+    if (window.__ymLoaded) return;
+    window.__ymLoaded = true;
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+      (window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+    /* Замените YANDEX_METRIKA_ID на ваш номер счётчика */
+    ym(YANDEX_METRIKA_ID, 'init', {
+      defer: true,
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+      webvisor: false,                /* Webvisor выключен — иначе пишутся ПДн из форм */
+      trackHash: true,
+      ecommerce: 'dataLayer'
+    });
+  }
+
+  function apply(consent){
+    setCookie(KEY, consent, DAYS);
+    var b = document.getElementById('cc-banner');
+    if (b) b.setAttribute('hidden','hidden');
+    if (consent === 'granted') loadYandexMetrika();
+  }
+
+  function show(){
+    var b = document.getElementById('cc-banner');
+    if (b) b.removeAttribute('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var current = getCookie(KEY);
+    if (current === 'granted') { loadYandexMetrika(); return; }
+    if (current === 'denied')  { return; }
+    show();
+    document.getElementById('cc-accept').addEventListener('click', function(){ apply('granted'); });
+    document.getElementById('cc-reject').addEventListener('click', function(){ apply('denied'); });
+  });
+
+  /* Открыть баннер заново со страницы /cookie-policy/ или ссылки в футере:
+     <a href="#" onclick="window.__ccReset();return false;">Настройки cookie</a> */
+  window.__ccReset = function(){
+    document.cookie = KEY+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    show();
+  };
+})();
+</script>
