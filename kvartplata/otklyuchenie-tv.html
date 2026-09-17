@@ -1,0 +1,305 @@
+<title>Отключение кабельного</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=PT+Mono&display=swap">
+<style>
+:root{
+  --bg:#F2F3F6;--surface:#FFFFFF;--surface2:#F8F9FB;
+  --text:#191C23;--muted:#5D6572;--faint:#8A929F;
+  --border:#D8DCE3;--border-strong:#B9BFC9;
+  --accent:#B02E2A;--accent-ink:#FFFFFF;--accent-soft:#F7E6E5;
+  --ok:#2E7D4F;--ok-soft:#E3F2E9;
+  --warn:#9A6400;--warn-soft:#FBF0D6;
+  --mark:#FFF1B8;--mark-ink:#5A4300;
+  --shadow:0 1px 2px rgba(20,24,32,.06),0 4px 14px rgba(20,24,32,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131519;--surface:#1C1F26;--surface2:#22262E;
+    --text:#E9EBEF;--muted:#A0A7B3;--faint:#737B88;
+    --border:#2E333D;--border-strong:#414856;
+    --accent:#E25B55;--accent-ink:#1A0C0B;--accent-soft:#3A2321;
+    --ok:#6CC391;--ok-soft:#1F3328;
+    --warn:#E5B04A;--warn-soft:#3A2F14;
+    --mark:#4A3D12;--mark-ink:#FFE8A3;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131519;--surface:#1C1F26;--surface2:#22262E;
+  --text:#E9EBEF;--muted:#A0A7B3;--faint:#737B88;
+  --border:#2E333D;--border-strong:#414856;
+  --accent:#E25B55;--accent-ink:#1A0C0B;--accent-soft:#3A2321;
+  --ok:#6CC391;--ok-soft:#1F3328;
+  --warn:#E5B04A;--warn-soft:#3A2F14;
+  --mark:#4A3D12;--mark-ink:#FFE8A3;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font:16px/1.5 "PT Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding-block:20px 60px;padding-inline:16px}
+h1{font:700 26px/1.15 "PT Serif",Georgia,serif;margin:0 0 4px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 20px;max-width:60ch}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
+
+/* apartment switcher */
+.apts{display:flex;gap:6px;margin:0 0 14px}
+.apts button{flex:1;padding:10px 4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font:700 15px "PT Sans",sans-serif;cursor:pointer;position:relative}
+.apts button[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.apts button .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--ok);display:none}
+.apts button.filled .dot{display:block}
+.apts button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* form */
+.form{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);margin:0 0 22px}
+.form h2{font:700 15px "PT Sans",sans-serif;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid .full{grid-column:1/-1}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 4px;font-weight:700}
+input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface2);color:var(--text);font:16px "PT Sans",sans-serif}
+input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+input::placeholder{color:var(--faint)}
+.hint{font-size:13px;color:var(--faint);margin:10px 0 0}
+.status{display:flex;align-items:center;gap:8px;font-size:14px;margin:12px 0 0;padding:8px 12px;border-radius:8px}
+.status.warn{background:var(--warn-soft);color:var(--warn)}
+.status.ok{background:var(--ok-soft);color:var(--ok)}
+
+/* docs */
+.doc{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin:0 0 18px;overflow:hidden}
+.doc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.doc-head h2{font:700 19px/1.2 "PT Serif",Georgia,serif;margin:2px 0 4px}
+.doc-head .where{font-size:14px;color:var(--muted);margin:0}
+.doc-head .where b{color:var(--text)}
+.copy{flex:none;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-ink);font:700 15px "PT Sans",sans-serif;cursor:pointer;white-space:nowrap}
+.copy:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.copy.done{background:var(--ok);color:#fff}
+.doc-body{position:relative}
+.doc pre{margin:0;padding:16px;font:13.5px/1.5 "PT Mono",ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-wrap:break-word;color:var(--text);max-height:420px;overflow:auto;background:var(--surface2)}
+.doc pre mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 3px;font-weight:700}
+.doc-foot{padding:10px 16px;font-size:13px;color:var(--faint);border-top:1px solid var(--border)}
+.tag{display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin:0 0 6px}
+
+.note{border-left:3px solid var(--accent);padding:10px 14px;background:var(--surface);border-radius:0 8px 8px 0;margin:0 0 22px;font-size:15px}
+.note b{color:var(--accent)}
+.section-title{font:700 13px "PT Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:26px 0 10px}
+@media (prefers-reduced-motion: no-preference){.copy{transition:background .15s}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Пять квартир · услуги связи для целей кабельного вещания · 528,39 ₽</div>
+  <h1>Отключение кабельного</h1>
+  <p class="lede">Выберите квартиру, заполните поля один раз — все четыре документа по ней соберутся сами. Кнопка «Скопировать» → вставить в кабинет.</p>
+
+  <div class="apts" role="group" aria-label="Квартира" id="apts"></div>
+
+  <div class="form">
+    <h2 id="formTitle">Квартира 1</h2>
+    <div class="grid">
+      <div class="full"><label for="f_addr">Адрес</label><input id="f_addr" data-k="addr" placeholder="г. Москва, ул. …, д. …, кв. …" autocomplete="off"></div>
+      <div><label for="f_ls">Лицевой счёт</label><input id="f_ls" data-k="ls" placeholder="0000000000" autocomplete="off"></div>
+      <div><label for="f_op">Оператор / кому подаёте</label><input id="f_op" data-k="op" placeholder="ПИК-Комфорт, Ростелеком…" autocomplete="off"></div>
+      <div><label for="f_pdate">Дата прошлого обращения</label><input id="f_pdate" data-k="pdate" placeholder="дд.мм.гггг" autocomplete="off"></div>
+      <div><label for="f_pnum">№ прошлого обращения</label><input id="f_pnum" data-k="pnum" placeholder="если помните" autocomplete="off"></div>
+      <div><label for="f_fio">ФИО собственника</label><input id="f_fio" data-k="fio" placeholder="Иванов И. И." autocomplete="off"></div>
+      <div><label for="f_date">Дата подачи</label><input id="f_date" data-k="date" placeholder="дд.мм.гггг" autocomplete="off"></div>
+      <div><label for="f_sum">Сумма в квитанции, ₽</label><input id="f_sum" data-k="sum" placeholder="528,39" autocomplete="off"></div>
+    </div>
+    <div class="status warn" id="status"></div>
+    <p class="hint">Данные хранятся только в этом браузере, на этом устройстве. Незаполненные поля в тексте подсвечены — их можно дописать уже после вставки.</p>
+  </div>
+
+  <div class="note"><b>Подаёт собственник.</b> От арендатора не примут. Тикет — отдельно по каждой квартире: объединённый рассмотрят как один и ответят одной отпиской. Номер обращения, который выдаст кабинет, сразу впишите в поле «№ прошлого обращения» — он нужен для жалоб.</div>
+
+  <div class="section-title">Шаг 1 · в кабинет оператора</div>
+  <div id="docs"></div>
+</div>
+
+<script>
+(function(){
+  var KEY='tv-off-v1';
+  var cur=1, data={};
+  try{ var s=localStorage.getItem(KEY); if(s){ var o=JSON.parse(s); data=o.data||{}; cur=o.cur||1; } }catch(e){}
+  for(var i=1;i<=5;i++){ data[i]=data[i]||{}; if(!data[i].sum) data[i].sum='528,39'; }
+
+  function today(){ var d=new Date(); var p=function(n){return (n<10?'0':'')+n}; return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear(); }
+
+  var FIELDS=[['addr','АДРЕС'],['ls','ЛИЦЕВОЙ СЧЁТ'],['op','ОПЕРАТОР'],['pdate','ДАТА ПРОШЛОГО ОБРАЩЕНИЯ'],['pnum','НОМЕР ОБРАЩЕНИЯ'],['fio','ФИО'],['date','ДАТА'],['sum','СУММА']];
+
+  function v(k){ var f=data[cur]||{}; var x=(f[k]||'').trim(); if(!x && k==='date') x=today(); return x; }
+  function ph(k){ for(var i=0;i<FIELDS.length;i++) if(FIELDS[i][0]===k) return '['+FIELDS[i][1]+']'; return '['+k+']'; }
+  // returns {text, html}
+  function T(k){ var x=v(k); return x ? {t:x,h:esc(x)} : {t:ph(k),h:'<mark>'+esc(ph(k))+'</mark>'}; }
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Each doc: build(get) where get(k) returns the piece; we render twice: text and html
+  var DOCS=[
+    {id:'ticket', tag:'Тикет', title:'Требование об отключении', where:'Кабинет оператора / ПИК-Комфорт → создать обращение', foot:'Срок ответа по закону — 10 дней. Зафиксируйте номер обращения.',
+     build:function(g){ return [
+'Тема: Расторжение договора и прекращение начислений за услуги связи для целей кабельного вещания — '+g('addr')+', л/с '+g('ls'),
+'',
+'Адрес: '+g('addr'),
+'Лицевой счёт: '+g('ls'),
+'Начисление: «Услуги связи для целей кабельного вещания», '+g('sum')+' ₽',
+'',
+'Услугой не пользуюсь и не пользовался. Договор на данную услугу мною не заключался либо подлежит расторжению по моему требованию.',
+'',
+'Ранее я уже обращался с требованием об отключении данной услуги ('+g('pdate')+', обращение № '+g('pnum')+'). Требование не исполнено, начисление продолжается. Считаю это навязыванием услуги.',
+'',
+'ТРЕБУЮ:',
+'',
+'1. Расторгнуть договор на услуги связи для целей кабельного вещания по указанному адресу.',
+'2. Прекратить начисление платы за данную услугу с ближайшего расчётного периода.',
+'3. Произвести перерасчёт и списать/вернуть суммы, начисленные за период с даты моего первого обращения ('+g('pdate')+') по дату фактического отключения.',
+'4. Направить мне письменный ответ с указанием даты, с которой начисление прекращено, и суммы перерасчёта.',
+'',
+'ОСНОВАНИЯ:',
+'',
+'— ст. 32 Закона РФ «О защите прав потребителей» № 2300-1 — право потребителя отказаться от исполнения договора об оказании услуг в любое время;',
+'— п. 1 ст. 782 ГК РФ — право заказчика на односторонний отказ от договора возмездного оказания услуг;',
+'— ст. 16 Закона РФ «О защите прав потребителей» — запрет навязывания услуг;',
+'— Правила оказания услуг связи для целей телевизионного вещания и (или) радиовещания, утв. Постановлением Правительства РФ от 22.12.2006 № 1494.',
+'',
+'СРОК ИСПОЛНЕНИЯ: 10 дней с даты регистрации настоящего обращения (ст. 31 Закона РФ «О защите прав потребителей»).',
+'',
+'При неисполнении в указанный срок я буду вынужден обратиться:',
+'— в Роскомнадзор — с жалобой на нарушение оператором связи порядка расторжения договора;',
+'— в Роспотребнадзор — с жалобой на навязывание услуги и отказ в удовлетворении законного требования потребителя;',
+'— в Государственную жилищную инспекцию — в части неправомерного включения начисления в платёжный документ;',
+'— в суд — с требованием о взыскании неосновательно начисленных сумм, неустойки, компенсации морального вреда (ст. 15) и штрафа в размере 50% от присуждённой суммы (п. 6 ст. 13 Закона РФ «О защите прав потребителей»).',
+'',
+'Прошу зарегистрировать обращение и сообщить его номер.',
+'',
+g('fio')+', собственник',
+'Дата: '+g('date')
+     ].join('\n'); }},
+
+    {id:'revive', tag:'Повторно', title:'Поднять старое обращение', where:'Тот же кабинет, где писали раньше → ответом или новым обращением', foot:'Отправлять одновременно с жалобами, не после. Последний абзац — самый рабочий.',
+     build:function(g){ return [
+'Тема: Повторное требование по неисполненному обращению — '+g('addr')+', л/с '+g('ls'),
+'',
+g('pdate')+' я направлял обращение № '+g('pnum')+' с требованием расторгнуть договор на услуги связи для целей кабельного вещания и прекратить начисление по адресу '+g('addr')+', лицевой счёт '+g('ls')+'.',
+'',
+'Требование не исполнено. Начисление «Услуги связи для целей кабельного вещания» в размере '+g('sum')+' ₽ продолжает выставляться.',
+'',
+'Срок ответа, установленный ст. 31 Закона РФ «О защите прав потребителей», истёк. Прошу сообщить:',
+'',
+'1. Результат рассмотрения обращения № '+g('pnum')+'.',
+'2. Причину неисполнения требования о расторжении договора.',
+'3. Дату, с которой начисление будет прекращено.',
+'',
+'Уведомляю, что жалобы в Роскомнадзор и Роспотребнадзор по данному факту поданы '+g('date')+'.',
+'',
+g('fio')+', собственник',
+'Дата: '+g('date')
+     ].join('\n'); }},
+
+    {id:'rkn', tag:'Жалоба', title:'Роскомнадзор', where:'<b>rkn.gov.ru</b> → обращения, или через Госуслуги. Отдельно по каждой квартире.', foot:'Приложить: платёжку со строкой, скрин обращения к оператору с номером и датой. Срок рассмотрения — 30 дней.',
+     build:function(g){ return [
+'Прошу провести проверку в отношении оператора связи '+g('op')+' по факту нарушения порядка расторжения договора об оказании услуг связи для целей телевизионного вещания.',
+'',
+'Адрес оказания услуги: '+g('addr'),
+'Лицевой счёт: '+g('ls'),
+'',
+'ОБСТОЯТЕЛЬСТВА:',
+'',
+g('pdate')+' я, как собственник помещения, направил оператору обращение № '+g('pnum')+' с требованием расторгнуть договор на услуги связи для целей кабельного вещания и прекратить начисление платы.',
+'',
+'Требование не исполнено. Ответ по существу не получен. Начисление в размере '+g('sum')+' ₽ продолжает выставляться в платёжном документе.',
+'',
+'НАРУШЕНИЯ:',
+'',
+'— ст. 44 Федерального закона «О связи» № 126-ФЗ;',
+'— Правила оказания услуг связи для целей телевизионного вещания и (или) радиовещания, утв. Постановлением Правительства РФ от 22.12.2006 № 1494, в части порядка расторжения договора по требованию абонента;',
+'— ст. 32 Закона РФ «О защите прав потребителей» — право потребителя отказаться от исполнения договора в любое время;',
+'— ст. 16 Закона РФ «О защите прав потребителей» — навязывание услуги.',
+'',
+'ПРОШУ:',
+'',
+'1. Провести проверку деятельности оператора в указанной части.',
+'2. Обязать оператора расторгнуть договор и прекратить начисление.',
+'3. Принять меры реагирования в пределах компетенции.',
+'4. Сообщить о результатах рассмотрения.',
+'',
+'Приложения: копия обращения к оператору, копия платёжного документа с оспариваемой строкой.',
+'',
+g('fio'),
+'Дата: '+g('date')
+     ].join('\n'); }},
+
+    {id:'rpn', tag:'Жалоба', title:'Роспотребнадзор', where:'<b>rospotrebnadzor.ru</b> → <b>только с входом через Госуслуги (ЕСИА)</b>, иначе проверку не назначат.', foot:'Приложить то же, что и в Роскомнадзор. Отдельно по каждой квартире.',
+     build:function(g){ return [
+'Прошу провести проверку в отношении '+g('op')+' по факту навязывания услуги и отказа в удовлетворении законного требования потребителя.',
+'',
+'Адрес: '+g('addr'),
+'Лицевой счёт: '+g('ls'),
+'Оспариваемое начисление: «Услуги связи для целей кабельного вещания», '+g('sum')+' ₽',
+'',
+'ОБСТОЯТЕЛЬСТВА:',
+'',
+'Услугой кабельного вещания я не пользуюсь. '+g('pdate')+' направил обращение № '+g('pnum')+' с требованием расторгнуть договор и прекратить начисление. Требование не исполнено, начисление продолжается, ответ по существу не получен.',
+'',
+'НАРУШЕНИЯ:',
+'',
+'— ст. 16 Закона РФ «О защите прав потребителей» — навязывание услуг;',
+'— ст. 32 Закона РФ «О защите прав потребителей» — право на отказ от исполнения договора;',
+'— ст. 31 Закона РФ «О защите прав потребителей» — нарушение срока удовлетворения требования потребителя.',
+'',
+'ПРОШУ:',
+'',
+'1. Провести проверку.',
+'2. Обязать прекратить начисление и произвести перерасчёт за период с '+g('pdate')+'.',
+'3. Привлечь виновных лиц к административной ответственности по ч. 2 ст. 14.8 КоАП РФ.',
+'4. Сообщить о результатах.',
+'',
+g('fio'),
+'Дата: '+g('date')
+     ].join('\n'); }}
+  ];
+
+  var aptsEl=document.getElementById('apts'), docsEl=document.getElementById('docs'), statusEl=document.getElementById('status'), formTitle=document.getElementById('formTitle');
+  var inputs=[].slice.call(document.querySelectorAll('input[data-k]'));
+
+  // build apartment buttons
+  for(var i=1;i<=5;i++){ var b=document.createElement('button'); b.type='button'; b.textContent='Кв. '+i; b.setAttribute('data-n',i); b.innerHTML='Кв. '+i+'<span class="dot"></span>'; b.addEventListener('click',function(){ cur=+this.getAttribute('data-n'); load(); render(); save(); }); aptsEl.appendChild(b); }
+
+  // build doc blocks
+  var docNodes={};
+  DOCS.forEach(function(d,idx){
+    if(idx===2){ var st=document.createElement('div'); st.className='section-title'; st.textContent='Шаг 2 · жалобы (подавать сразу, параллельно)'; docsEl.appendChild(st); }
+    var el=document.createElement('div'); el.className='doc'; el.id='doc-'+d.id;
+    el.innerHTML='<div class="doc-head"><div><span class="tag">'+d.tag+'</span><h2>'+d.title+'</h2><p class="where">'+d.where+'</p></div><button type="button" class="copy" data-doc="'+d.id+'">Скопировать</button></div><div class="doc-body"><pre></pre></div><div class="doc-foot">'+d.foot+'</div>';
+    docsEl.appendChild(el);
+    docNodes[d.id]={pre:el.querySelector('pre'),btn:el.querySelector('.copy'),doc:d};
+    docNodes[d.id].btn.addEventListener('click',function(){ copyDoc(this.getAttribute('data-doc'), this); });
+  });
+
+  function load(){ formTitle.textContent='Квартира '+cur; inputs.forEach(function(inp){ inp.value=(data[cur][inp.getAttribute('data-k')]||''); }); }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify({cur:cur,data:data})); }catch(e){} }
+  function isFilled(n){ var f=data[n]||{}; return !!(f.addr&&f.addr.trim()&&f.ls&&f.ls.trim()); }
+
+  function render(){
+    [].slice.call(aptsEl.children).forEach(function(b){ var n=+b.getAttribute('data-n'); b.setAttribute('aria-pressed', n===cur?'true':'false'); b.className=isFilled(n)?'filled':''; });
+    var missing=[]; FIELDS.forEach(function(f){ if(f[0]!=='date' && !v(f[0])) missing.push(f[1].toLowerCase()); });
+    if(missing.length){ statusEl.className='status warn'; statusEl.textContent='Не заполнено: '+missing.join(', ')+'. В тексте эти места подсвечены.'; }
+    else { statusEl.className='status ok'; statusEl.textContent='Все поля заполнены — можно копировать.'; }
+    DOCS.forEach(function(d){ docNodes[d.id].pre.innerHTML=d.build(function(k){ return T(k).h; }); });
+  }
+
+  function docText(id){ var d=docNodes[id].doc; return d.build(function(k){ return T(k).t; }); }
+
+  function copyDoc(id, btn){
+    var text=docText(id);
+    var done=function(){ btn.classList.add('done'); btn.textContent='Скопировано'; setTimeout(function(){ btn.classList.remove('done'); btn.textContent='Скопировать'; },1800); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done, function(){ fallback(text, done); }); }
+    else fallback(text, done);
+  }
+  function fallback(text, done){
+    var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='-1000px'; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ ta.style.top='0'; ta.style.height='200px'; ta.style.width='100%'; ta.style.zIndex='9'; }
+    setTimeout(function(){ if(ta.parentNode) ta.parentNode.removeChild(ta); },2500);
+  }
+
+  inputs.forEach(function(inp){ inp.addEventListener('input',function(){ data[cur][inp.getAttribute('data-k')]=inp.value; render(); save(); }); });
+
+  load(); render();
+})();
+</script>
