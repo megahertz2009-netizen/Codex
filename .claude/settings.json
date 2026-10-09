@@ -3,7 +3,11 @@
     "allow": [
       "mcp__https_mcp_higgsfield_ai_mcp",
       "Workflow",
-      "Agent"
+      "Agent",
+      "mcp__higgsfield",
+      "mcp__Higgsfield",
+      "mcp__claude_ai_Higgsfield",
+      "Bash"
     ]
   }
 }
