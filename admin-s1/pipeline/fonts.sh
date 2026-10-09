@@ -1,0 +1,1 @@
+mkdir -p ~/.fonts; [ -s ~/.fonts/Montserrat.ttf ] || curl -sSfL -o ~/.fonts/Montserrat.ttf "https://github.com/google/fonts/raw/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf"; fc-cache -f >/dev/null 2>&1
